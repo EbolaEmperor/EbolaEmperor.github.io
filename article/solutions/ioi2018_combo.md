@@ -1,0 +1,33 @@
+# 【IOI2018】组合动作
+
+首先要通过两次操作确定首字母是什么。先问"AB"，再根据返回结果问"A"或"X"即可
+
+我们假设A是首字母。设S是已知前缀，我们构造字符串"SBSXBSXXSXY"。显然，若下一个字符是Y/B/X，则询问的结果就是len(S)/len(S)+1/len(S)+2，这样我们就能区分出下一个字符是什么
+
+注意最后一个字符要特判，因为当len(S)=n-1时，我们构造的字符串长度会超过4n
+
+```cpp
+#include<bits/stdc++.h>
+#include "combo.h"
+using namespace std;
+
+string guess_sequence(int n)
+{
+    static char ch[4]={'A','B','X','Y'};
+    static string ans;
+    if(press("AB")) press("A")?void():swap(ch[0],ch[1]);
+    else press("X")?swap(ch[0],ch[2]):swap(ch[0],ch[3]);
+    ans+=ch[0];
+    if(n==1) return ans;
+    for(int i=2;i<n;i++)
+    {
+        int len=press(ans+ch[1]+ch[1]+ans+ch[1]+ch[2]+ans+ch[1]+ch[3]+ans+ch[2]);
+        if(len==i+1) ans+=ch[1];
+        else if(len==i) ans+=ch[2];
+        else ans+=ch[3];
+    }
+    if(press(ans+ch[1])==n) return ans+ch[1];
+    if(press(ans+ch[2])==n) return ans+ch[2];
+    return ans+ch[3];
+}
+```
